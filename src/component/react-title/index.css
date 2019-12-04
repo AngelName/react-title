@@ -1,0 +1,41 @@
+:root {
+  --list-height: 28px;
+}
+.bxer-list {
+  list-style: none;
+  padding-left: 20px;
+  line-height: var(--list-height);
+  margin: 0;
+}
+.bxer-box {
+  border-radius: 5px;
+}
+.bxer-node {
+  text-align: left;
+}
+.bxer-content {
+  /* border: 1px solid #333; */
+  transition: all 0.5s;
+  padding-left: 12px;
+  color: #666;
+  cursor: pointer;
+}
+.bxer-mark {
+  height: var(--list-height);
+}
+.bxer-active {
+  background: #46b3e6;
+  color: #fff;
+}
+.bxer-label {
+  transition: all 0.5s;
+  display: inline-block;
+  background: #dff6f0;
+  width: 3px;
+  height: var(--list-height);
+  position: absolute;
+  left: 5px;
+}
+.bxer-active .bxer-label {
+  background: #46b3e6;
+}
