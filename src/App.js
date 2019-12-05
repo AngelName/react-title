@@ -1,5 +1,4 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import ReactTitle, { useRefEl } from "./component/react-title";
 function App() {
