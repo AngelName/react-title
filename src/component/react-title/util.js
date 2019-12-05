@@ -91,3 +91,21 @@ function loopNode(tree, callBack) {
     }
   }
 }
+
+// 防抖
+function debounce(fn, time) {
+  let timer = null;
+  return function() {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      fn();
+    }, time);
+  };
+}
+
+// todo 展开树
+function expandTreeToList(tree) {
+  let data = [];
+}

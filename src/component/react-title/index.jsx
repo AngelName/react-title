@@ -8,7 +8,7 @@ function loopTree(tree) {
   return tree.map(item => {
     if (item.children) {
       return (
-        <Node key={item.id} item={item} onClick={console.log}>
+        <Node key={item.id} item={item}>
           {loopTree(item.children)}
         </Node>
       );
