@@ -4,7 +4,13 @@ import ReactTitle, { useRefEl } from "./component/react-title";
 function App() {
   const [node, ref] = useRefEl();
   return (
-    <div className="App" ref={ref}>
+    <div
+      className="App"
+      ref={ref}
+      onScroll={() => {
+        console.log("fff");
+      }}
+    >
       <ReactTitle className="react-title" el={node}></ReactTitle>
       <h1>1. xxx</h1>
       <h2>1.1 xxx</h2>

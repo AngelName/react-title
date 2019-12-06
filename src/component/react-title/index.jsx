@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./index.css";
-import { useContainerRef, useRefEl } from "./util";
+import { useContainerRef, useRefEl, debounce } from "./util";
 import Node from "./node";
 import ActiveKey from "./activeKeyContext";
 
@@ -17,20 +17,34 @@ function loopTree(tree) {
     }
   });
 }
-
-function ReactTitle({ el, className }) {
-  const [header] = useContainerRef(el);
+const useActiveKey = () => {
   const [activeKey, setActiveKey] = useState("");
+  function intercept(key) {
+    window.location.hash = key;
+    setActiveKey(key);
+  }
+  return [activeKey, intercept];
+};
+function ReactTitle({ el, className }) {
+  const [header, flatHeader] = useContainerRef(el);
+  const [activeKey, setActiveKey] = useActiveKey();
   const view = loopTree(header);
 
+  const handleWhell = debounce(event => {
+    const index = flatHeader.indexOf(activeKey);
+    if (index === -1) {
+      setActiveKey(flatHeader[0]);
+    } else {
+      setActiveKey(flatHeader[index + 1]);
+    }
+  }, 500);
+
   return (
-    <div className={className}>
+    <div className={className} onScroll={() => {}}>
       <ActiveKey.Provider value={activeKey}>
         <div
           onClick={event => {
             setActiveKey(event.target.dataset.id);
-            window.location.hash = event.target.dataset.id;
-            console.log(event.target.id, event.target.dataset.id);
           }}
           className="bxer-box"
           style={{ width: "200px" }}

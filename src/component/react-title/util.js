@@ -8,15 +8,17 @@ const Header = ["H1", "H2", "H3", "H4", "H5", "H6"];
 //获取容器数据
 export function useContainerRef(node) {
   let [header, setHeader] = useState([]);
+  let [flatHeader, setFlatHeader] = useState([]);
   useEffect(() => {
     if (node !== null) {
       let els = node.children;
-      const data = LoopHeader(els);
-      setHeader(data);
+      const [tree, flatTree] = LoopHeader(els);
+      setHeader(tree);
+      setFlatHeader(flatTree);
     }
   }, [node]);
 
-  return [header];
+  return [header, flatHeader];
 }
 
 // 获取唯一id
@@ -49,6 +51,7 @@ function extractNumber(str) {
 // 生成header 的树
 function LoopHeader(els) {
   const tree = [];
+  const flatTree = [];
   Array.from(els).forEach(item => {
     const { tagName } = item;
     if (Header.includes(tagName)) {
@@ -60,6 +63,7 @@ function LoopHeader(els) {
         text: item.textContent,
         id: item.id
       };
+      flatTree.push(item.id);
       if (tree.length === 0) {
         tree.push(newNode);
       } else {
@@ -79,7 +83,7 @@ function LoopHeader(els) {
       }
     }
   });
-  return tree;
+  return [tree, flatTree];
 }
 
 // 由下到上的遍历树
@@ -92,20 +96,15 @@ function loopNode(tree, callBack) {
   }
 }
 
-// 防抖
-function debounce(fn, time) {
+// 防抖 无用了
+export function debounce(fn, time) {
   let timer = null;
   return function() {
     if (timer) {
       clearTimeout(timer);
     }
     timer = setTimeout(() => {
-      fn();
+      fn(...arguments);
     }, time);
   };
-}
-
-// todo 展开树
-function expandTreeToList(tree) {
-  let data = [];
 }
