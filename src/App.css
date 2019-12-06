@@ -25,3 +25,7 @@
   right: 40px;
   top: 40px;
 }
+p {
+  width: 200px;
+  margin: 0 auto;
+}

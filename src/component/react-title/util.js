@@ -12,6 +12,7 @@ export function useContainerRef(node) {
   useEffect(() => {
     if (node !== null) {
       let els = node.children;
+
       const [tree, flatTree] = LoopHeader(els);
       setHeader(tree);
       setFlatHeader(flatTree);
@@ -63,7 +64,8 @@ function LoopHeader(els) {
         text: item.textContent,
         id: item.id
       };
-      flatTree.push(item.id);
+      const { top } = item.getBoundingClientRect();
+      flatTree.push({ id: item.id, top });
       if (tree.length === 0) {
         tree.push(newNode);
       } else {
@@ -96,7 +98,7 @@ function loopNode(tree, callBack) {
   }
 }
 
-// 防抖 无用了
+// 防抖
 export function debounce(fn, time) {
   let timer = null;
   return function() {
@@ -106,5 +108,24 @@ export function debounce(fn, time) {
     timer = setTimeout(() => {
       fn(...arguments);
     }, time);
+  };
+}
+
+// 节流 不知道对不对但是可以用
+export function throttle(fn, time) {
+  let completed = true;
+  let timer = null;
+  return function() {
+    if (completed) {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+      completed = false;
+      timer = setTimeout(() => {
+        fn(...arguments);
+        completed = true;
+      }, time);
+    }
   };
 }

@@ -1,6 +1,15 @@
 :root {
   --list-height: 28px;
 }
+.bxer-react-title::-webkit-scrollbar {
+  width: 0;
+}
+.bxer-react-title {
+  height: 200px;
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none;
+  overflow: auto;
+}
 .bxer-list {
   list-style: none;
   padding-left: 20px;
