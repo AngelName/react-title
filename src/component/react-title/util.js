@@ -65,7 +65,8 @@ function LoopHeader(els) {
         id: item.id
       };
       const { top } = item.getBoundingClientRect();
-      flatTree.push({ id: item.id, top });
+      const { scrollTop } = document.documentElement;
+      flatTree.push({ id: item.id, top: scrollTop + top });
       if (tree.length === 0) {
         tree.push(newNode);
       } else {

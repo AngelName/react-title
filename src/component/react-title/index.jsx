@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./index.css";
 import { useContainerRef, useRefEl, debounce, throttle } from "./util";
 import Node from "./node";
@@ -25,6 +25,7 @@ const useActiveKey = () => {
     } else {
       window.history.pushState({}, "", window.location.origin + `/#${key}`);
     }
+
     setActiveKey(key);
   }
   return [activeKey, intercept];
@@ -32,54 +33,61 @@ const useActiveKey = () => {
 function ReactTitle({ el, className }) {
   const [header, flatHeader] = useContainerRef(el);
   const [activeKey, setActiveKey] = useActiveKey();
+  const mainRef = useRef(null);
 
   const view = loopTree(header);
 
   useEffect(() => {
-    const a = debounce(y => {
-      if (flatHeader.length <= 0) return;
+    const updateReactTitle = debounce(y => {
+      if (mainRef != null) {
+        const { scrollTop, scrollHeight } = document.documentElement;
+        const { current } = mainRef;
+        const liheight = 28;
+        if (flatHeader.length <= 0) return;
 
-      if (flatHeader[0] && y <= flatHeader[0].top) {
-        console.log(y, flatHeader[0], flatHeader);
-
-        setActiveKey(flatHeader[0].id);
-        return;
-      }
-      if (
-        flatHeader[flatHeader.length - 1] &&
-        y >= flatHeader[flatHeader.length - 1].top
-      ) {
-        setActiveKey(flatHeader[flatHeader.length - 1].id);
-        return;
-      }
-      for (let i = 0; i < flatHeader.length; i++) {
-        let prev = flatHeader[i];
-        let next = flatHeader[i + 1] || prev;
-        if (prev.top <= y && next.top >= y) {
-          // console.log(prev, next);
-          setActiveKey(prev.id);
+        if (flatHeader[0] && y <= flatHeader[0].top) {
+          current.scrollTop = 0;
+          setActiveKey(flatHeader[0].id);
           return;
+        }
+        if (
+          flatHeader[flatHeader.length - 1] &&
+          y >= flatHeader[flatHeader.length - 1].top
+        ) {
+          current.scrollTop = flatHeader.length - 1 * liheight;
+          setActiveKey(flatHeader[flatHeader.length - 1].id);
+          return;
+        }
+        for (let i = 0; i < flatHeader.length; i++) {
+          let prev = flatHeader[i];
+          let next = flatHeader[i + 1] || prev;
+          if (prev.top <= y && next.top >= y) {
+            current.scrollTop = i * liheight;
+            setActiveKey(next.id);
+            return;
+          }
         }
       }
     }, 500);
     document.addEventListener(
       "scroll",
       event => {
-        try {
-          let y = event.target.scrollingElement.scrollTop;
-          a(y, flatHeader);
-        } catch (err) {
-          console.warn("也许这里有更好的解决办法", err);
+        if (!event.target.id) {
+          const { scrollTop, scrollHeight } = document.documentElement;
+          updateReactTitle(scrollTop, flatHeader);
         }
       },
       true
     );
-
-    return document.removeEventListener("scroll", a);
+    return document.removeEventListener("scroll", updateReactTitle);
   }, [flatHeader, setActiveKey]);
 
   return (
-    <div className={`${className} bxer-react-title`} onScroll={() => {}}>
+    <div
+      id="react-box"
+      className={`${className} bxer-react-title`}
+      ref={mainRef}
+    >
       <ActiveKey.Provider value={activeKey}>
         <div
           onClick={event => {
